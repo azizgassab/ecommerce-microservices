@@ -1,39 +1,30 @@
- 
-const db = require("../config/db");
+const Product = require('../models/Product');
 
-const getProducts = (req, res) => {
-    db.all("SELECT * FROM products", [], (err, rows) => {
-        if (err) {
-            return res.status(500).json(err);
-        }
+exports.getProducts = async (req, res) => {
+  try {
+    const products = await Product.findAll();
 
-        res.json(rows);
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
     });
+  }
 };
 
-const createProduct = (req, res) => {
-    const { name, price, description } = req.body;
+exports.createProduct = async (req, res) => {
+  try {
+    const { name, price } = req.body;
 
-    const query = `
-        INSERT INTO products(name, price, description)
-        VALUES (?, ?, ?)
-    `;
-
-    db.run(query, [name, price, description], function(err) {
-        if (err) {
-            return res.status(500).json(err);
-        }
-
-        res.status(201).json({
-            id: this.lastID,
-            name,
-            price,
-            description
-        });
+    const product = await Product.create({
+      name,
+      price
     });
-};
 
-module.exports = {
-    getProducts,
-    createProduct
+    res.status(201).json(product);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message
+    });
+  }
 };

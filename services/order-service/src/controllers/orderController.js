@@ -12,25 +12,36 @@ const getOrders = (req, res) => {
 
 const createOrder = (req, res) => {
     const { productId, quantity, total } = req.body;
-
+    const {
+        sendOrderEvent
+    } = require("../kafka/producer");
     const query = `
         INSERT INTO orders(productId, quantity, total)
         VALUES (?, ?, ?)
     `;
 
-    db.run(query, [productId, quantity, total], function(err) {
+    db.run(query, [productId, quantity, total], async function(err) {
         if (err) {
             return res.status(500).json(err);
         }
-
+        await sendOrderEvent({
+            productId,
+            quantity,
+            total
+        });
         res.status(201).json({
             id: this.lastID,
             productId,
             quantity,
             total
         });
+        
+
+        
     });
+    
 };
+
 
 module.exports = {
     getOrders,

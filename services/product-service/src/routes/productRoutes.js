@@ -1,22 +1,12 @@
- 
-const express = require("express");
-
+const express = require('express');
 const router = express.Router();
 
 const {
-    getProducts,
-    createProduct
-} = require("../controllers/productController");
+  getProducts,
+  createProduct
+} = require('../controllers/productController');
 
-router.get("/", getProducts);
-
-router.post("/", createProduct);
-
-router.get("/health", (req, res) => {
-    res.json({
-        service: "product-service",
-        status: "running"
-    });
-});
+router.get('/', getProducts);
+router.post('/', createProduct);
 
 module.exports = router;
