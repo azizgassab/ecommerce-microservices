@@ -1,20 +1,25 @@
+const client = require('../services/grpcClient');
+
 const resolvers = {
 
     Query: {
 
-        users: () => {
-            return [
-                {
-                    id: 1,
-                    name: "Aziz",
-                    email: "aziz@gmail.com"
-                },
-                {
-                    id: 2,
-                    name: "Gadour",
-                    email: "gadour@gmail.com"
-                }
-            ];
+        users: async () => {
+
+            return new Promise((resolve, reject) => {
+
+                client.GetUsers({}, (error, response) => {
+
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(response.users);
+                    }
+
+                });
+
+            });
+
         }
 
     }

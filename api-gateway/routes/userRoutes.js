@@ -1,19 +1,21 @@
 const express = require('express');
 
+const client = require('../services/grpcClient');
+
 const router = express.Router();
 
 router.get('/users', (req, res) => {
-    res.json({
-        success: true,
-        message: 'Get all users'
-    });
-});
 
-router.post('/users', (req, res) => {
-    res.json({
-        success: true,
-        message: 'Create user'
+    client.GetUsers({}, (error, response) => {
+
+        if (error) {
+            return res.status(500).json(error);
+        }
+
+        res.json(response.users);
+
     });
+
 });
 
 module.exports = router;

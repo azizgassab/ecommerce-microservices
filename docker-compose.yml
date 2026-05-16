@@ -1,0 +1,60 @@
+version: '3.9'
+
+services:
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api-gateway:/app
+      - /app/node_modules
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./user-service:/app
+      - /app/node_modules
+
+  product-service:
+    build: ./product-service
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./product-service:/app
+      - /app/node_modules
+
+  order-service:
+    build: ./order-service
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./order-service:/app
+      - /app/node_modules
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./notification-service:/app
+      - /app/node_modules
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1      
