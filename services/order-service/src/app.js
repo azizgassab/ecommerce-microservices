@@ -8,6 +8,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/orders", orderRoutes);
+app.get("/health", (req, res) => {
+    res.json({
+        service: "order-service",
+        status: "running"
+    });
+});
+
+app.use("/orders", orderRoutes);
 
 module.exports = app;
