@@ -38,8 +38,9 @@ export async function createOrdersFromCart(cartItems) {
 
   for (const item of cartItems) {
     const payload = {
-      product: item.name,
-      quantity: item.quantity
+      productId: parseInt(item.id, 10) || 0,
+      quantity: item.quantity,
+      total: item.price * item.quantity
     };
 
     const response = await requestFirstAvailable(REST_ENDPOINTS.orders, (endpoint) =>
@@ -47,7 +48,7 @@ export async function createOrdersFromCart(cartItems) {
     );
 
     createdOrders.push({
-      id: response?.order?.id || `${Date.now()}-${item.id}`,
+      id: response?.id || response?.order?.id || `${Date.now()}-${item.id}`,
       product: item.name,
       quantity: item.quantity,
       total: item.price * item.quantity,

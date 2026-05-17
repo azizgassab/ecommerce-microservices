@@ -99,6 +99,7 @@ const startGrpcServer = (port) => {
       console.error("Order gRPC server error:", err);
       return;
     }
+    grpcServer.start();
     console.log(`Order gRPC server running on ${address}`);
   });
 };

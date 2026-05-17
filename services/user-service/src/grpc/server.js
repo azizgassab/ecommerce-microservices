@@ -84,6 +84,7 @@ const startGrpcServer = (port) => {
       console.error("gRPC server error:", err);
       return;
     }
+    grpcServer.start();
     console.log(`User gRPC server running on ${address}`);
   });
 };
