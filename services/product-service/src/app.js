@@ -1,4 +1,3 @@
- 
 const express = require("express");
 const cors = require("cors");
 
@@ -9,6 +8,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/products", productRoutes);
+app.get("/health", (req, res) => {
+    res.json({
+        service: "product-service",
+        status: "running"
+    });
+});
+
+app.use("/products", productRoutes);
 
 module.exports = app;
