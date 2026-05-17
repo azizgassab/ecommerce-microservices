@@ -9,7 +9,7 @@ const packageDefinition = protoLoader.loadSync(
 const proto = grpc.loadPackageDefinition(packageDefinition).user;
 
 const client = new proto.UserService(
-    'localhost:5001',
+    'user-service:5001',
     grpc.credentials.createInsecure()
 );
 
