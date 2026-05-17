@@ -3,7 +3,9 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { graphqlHTTP } = require("express-graphql");
+const swaggerUi = require("swagger-ui-express");
 
+const swaggerSpec = require("./swagger");
 const graphqlSchema = require("./graphql/schema");
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
@@ -21,6 +23,8 @@ app.use(express.json());
 app.get("/health", (req, res) => {
   res.json({ service: "api-gateway", status: "running" });
 });
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
