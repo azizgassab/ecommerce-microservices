@@ -40,6 +40,10 @@ The application uses:
 - Port: 3000
 - Handles routing and GraphQL
 
+## Frontend (React)
+- Port: 3004 (via Docker Compose)
+- Professional ecommerce UI with routing, cart, orders, REST + GraphQL integration
+
 ## User Service
 - Port: 5001
 - Handles users with gRPC communication
@@ -90,6 +94,10 @@ npm install
 ```bash
 docker compose up --build
 ```
+
+Frontend access:
+
+- `http://localhost:3004`
 
 ---
 
