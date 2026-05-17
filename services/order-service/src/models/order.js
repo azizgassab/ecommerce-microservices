@@ -3,13 +3,13 @@ const db = require("../config/db");
 const Order = {
     create: (data) => {
         return new Promise((resolve, reject) => {
-            const { quantity, total } = data;
+            const { productId, quantity, total } = data;
             db.run(
-                "INSERT INTO orders (quantity, total) VALUES (?, ?, ?)",
+                "INSERT INTO orders (productId, quantity, total) VALUES (?, ?, ?)",
                 [productId, quantity, total],
                 function (err) {
                     if (err) return reject(err);
-                    resolve({ id: this.lastID, quantity, total });
+                    resolve({ id: this.lastID, productId, quantity, total });
                 }
             );
         });
