@@ -1,40 +1,32 @@
 const { Kafka } = require("kafkajs");
 
 const kafka = new Kafka({
-    clientId: "notification-service",
-    brokers: ["kafka:9092"]
+  clientId: "notification-service",
+  brokers: ["kafka:9092"]
 });
 
 const consumer = kafka.consumer({
-    groupId: "notification-group"
+  groupId: "notification-group"
 });
 
-const startConsumer = async () => {
+const connectConsumer = async () => {
+  await consumer.connect();
 
-    await consumer.connect();
+  await consumer.subscribe({
+    topic: "order-created",
+    fromBeginning: true
+  });
 
-    console.log("Kafka Consumer Connected");
+  await consumer.run({
+    eachMessage: async ({ message }) => {
+      const order = JSON.parse(message.value.toString());
 
-    await consumer.subscribe({
-        topic: "order-created",
-        fromBeginning: true
-    });
+      console.log("New Order Received:");
+      console.log(order);
+    }
+  });
 
-    await consumer.run({
-        eachMessage: async ({ topic, partition, message }) => {
-
-            const order = JSON.parse(message.value.toString());
-
-            console.log("New Order Received");
-
-            console.log(order);
-
-            // future:
-            // send email
-            // send sms
-            // push notification
-        }
-    });
+  console.log("Kafka Consumer Connected");
 };
 
-module.exports = startConsumer;
+module.exports = connectConsumer;

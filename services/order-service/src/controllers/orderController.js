@@ -1,49 +1,22 @@
 const db = require("../config/db");
+const { sendOrderEvent } = require("../kafka/producer");
+const Order = require("../models/order");
 
 const getOrders = (req, res) => {
     db.all("SELECT * FROM orders", [], (err, rows) => {
-        if (err) {
-            return res.status(500).json(err);
-        }
-
+        if (err) return res.status(500).json(err);
         res.json(rows);
     });
 };
 
-const createOrder = (req, res) => {
-    const { productId, quantity, total } = req.body;
-    const {
-        sendOrderEvent
-    } = require("../kafka/producer");
-    const query = `
-        INSERT INTO orders(productId, quantity, total)
-        VALUES (?, ?, ?)
-    `;
-
-    db.run(query, [productId, quantity, total], async function(err) {
-        if (err) {
-            return res.status(500).json(err);
-        }
-        await sendOrderEvent({
-            productId,
-            quantity,
-            total
-        });
-        res.status(201).json({
-            id: this.lastID,
-            productId,
-            quantity,
-            total
-        });
-        
-
-        
-    });
-    
+const createOrder = async (req, res) => {
+    try {
+        const order = await Order.create(req.body);
+        await sendOrderEvent(order);
+        res.status(201).json(order);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 };
 
-
-module.exports = {
-    getOrders,
-    createOrder
-};
+module.exports = { getOrders, createOrder };

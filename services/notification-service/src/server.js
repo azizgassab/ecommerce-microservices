@@ -1,18 +1,10 @@
-require("dotenv").config();
+const express = require("express");
+const connectConsumer = require("./kafka/consumer");
 
-const app = require("./app");
+const app = express();
 
-const startConsumer = require("./kafka/consumer");
+connectConsumer();
 
-const PORT = process.env.PORT || 3003;
-
-const startServer = async () => {
-
-    await startConsumer();
-
-    app.listen(PORT, () => {
-        console.log(`notification-service running on port ${PORT}`);
-    });
-};
-
-startServer();
+app.listen(3003, () => {
+  console.log("notification-service running on port 3003");
+});
