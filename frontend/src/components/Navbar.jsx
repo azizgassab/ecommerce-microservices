@@ -1,16 +1,13 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Home', end: true },
   { to: '/products', label: 'Products' },
-  { to: '/cart', label: 'Cart' },
   { to: '/orders', label: 'Orders' }
 ];
 
 function Navbar() {
-  const { totalItems } = useCart();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const closeMenu = () => {
@@ -50,16 +47,6 @@ function Navbar() {
               {item.label}
             </NavLink>
           ))}
-
-          <NavLink
-            className={({ isActive }) =>
-              `nav-link nav-cart ${isActive ? 'active' : ''}`
-            }
-            to="/cart"
-            onClick={closeMenu}
-          >
-            Cart <span className="badge">{totalItems}</span>
-          </NavLink>
         </nav>
       </div>
     </header>

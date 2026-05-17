@@ -4,24 +4,40 @@ import EmptyState from '../components/EmptyState';
 import ErrorState from '../components/ErrorState';
 import LoadingSpinner from '../components/LoadingSpinner';
 import StatusBanner from '../components/StatusBanner';
-import { useCart } from '../context/CartContext';
 import { useProductDetails } from '../hooks/useProducts';
 import { formatCurrency } from '../utils/formatters';
+import { postRest } from '../services/restApi';
+import { API_CONFIG } from '../services/config';
 
 function ProductDetailsPage() {
   const { productId } = useParams();
-  const { addItem } = useCart();
   const { product, isLoading, error, retry } = useProductDetails(productId);
   const [quantity, setQuantity] = useState(1);
-  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [isOrdering, setIsOrdering] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState('');
+  const [orderError, setOrderError] = useState('');
 
-  const handleAddToCart = () => {
-    if (!product) {
-      return;
+  const handleOrderNow = async () => {
+    if (!product) return;
+
+    setIsOrdering(true);
+    setOrderSuccess('');
+    setOrderError('');
+
+    try {
+      const payload = {
+        productId: parseInt(product.id, 10) || 0,
+        quantity,
+        total: product.price * quantity
+      };
+
+      await postRest(`${API_CONFIG.gatewayRestUrl}/orders`, payload);
+      setOrderSuccess(`Order placed for ${product.name} x${quantity}!`);
+    } catch (err) {
+      setOrderError(err.message || 'Failed to create order.');
+    } finally {
+      setIsOrdering(false);
     }
-
-    addItem(product, quantity);
-    setFeedbackMessage(`${product.name} added to cart.`);
   };
 
   if (isLoading) {
@@ -57,6 +73,8 @@ function ProductDetailsPage() {
     );
   }
 
+  const totalPrice = product.price * quantity;
+
   return (
     <div className="container page page-product-details">
       <div className="breadcrumbs">
@@ -76,24 +94,52 @@ function ProductDetailsPage() {
             <label htmlFor="quantity" className="form-field">
               Quantity
             </label>
-            <input
-              id="quantity"
-              className="input input-quantity"
-              min="1"
-              type="number"
-              value={quantity}
-              onChange={(event) =>
-                setQuantity(Math.max(1, Number(event.target.value || 1)))
-              }
-            />
+            <div className="quantity-controls">
+              <button
+                className="btn btn-ghost"
+                type="button"
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                disabled={quantity <= 1}
+              >
+                -
+              </button>
+              <input
+                id="quantity"
+                className="input input-quantity"
+                min="1"
+                type="number"
+                value={quantity}
+                onChange={(event) =>
+                  setQuantity(Math.max(1, Number(event.target.value || 1)))
+                }
+              />
+              <button
+                className="btn btn-ghost"
+                type="button"
+                onClick={() => setQuantity(quantity + 1)}
+              >
+                +
+              </button>
+            </div>
 
-            <button className="btn btn-primary" type="button" onClick={handleAddToCart}>
-              Add to Cart
+            <p className="total-price">Total: {formatCurrency(totalPrice)}</p>
+
+            <button
+              className="btn btn-primary btn-order"
+              type="button"
+              onClick={handleOrderNow}
+              disabled={isOrdering}
+            >
+              {isOrdering ? 'Processing...' : 'Order Now'}
             </button>
           </div>
 
-          {feedbackMessage ? (
-            <StatusBanner tone="success">{feedbackMessage}</StatusBanner>
+          {orderSuccess ? (
+            <StatusBanner tone="success">{orderSuccess}</StatusBanner>
+          ) : null}
+
+          {orderError ? (
+            <StatusBanner tone="error">{orderError}</StatusBanner>
           ) : null}
         </div>
       </section>

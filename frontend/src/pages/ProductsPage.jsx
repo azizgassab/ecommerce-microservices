@@ -1,14 +1,13 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import EmptyState from '../components/EmptyState';
 import ErrorState from '../components/ErrorState';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ProductCard from '../components/ProductCard';
-import { useCart } from '../context/CartContext';
 import { useProducts } from '../hooks/useProducts';
 
 function ProductsPage() {
   const { products, isLoading, error, retry } = useProducts();
-  const { addItem } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredProducts = useMemo(() => {
@@ -44,6 +43,12 @@ function ProductsPage() {
         />
       </section>
 
+      <div className="action-bar">
+        <Link className="btn btn-primary" to="/products/new">
+          Add Product
+        </Link>
+      </div>
+
       {isLoading ? <LoadingSpinner label="Loading products..." /> : null}
 
       {!isLoading && error ? (
@@ -69,7 +74,6 @@ function ProductsPage() {
             <ProductCard
               key={product.id}
               product={product}
-              onAddToCart={(selectedProduct) => addItem(selectedProduct, 1)}
             />
           ))}
         </div>

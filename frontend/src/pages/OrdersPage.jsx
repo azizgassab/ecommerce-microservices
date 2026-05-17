@@ -38,9 +38,9 @@ function OrdersPage() {
         {!isLoading && !error && orders.length === 0 ? (
           <EmptyState
             title="No orders yet"
-            message="Create an order from the cart page to populate this list."
-            actionLabel="Go to cart"
-            actionTo="/cart"
+            message="Browse products and place an order to populate this list."
+            actionLabel="Go to products"
+            actionTo="/products"
           />
         ) : null}
 

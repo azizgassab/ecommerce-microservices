@@ -5,6 +5,12 @@ export const getRest = async (url) => requestJson(url, { method: 'GET' });
 export const postRest = async (url, payload) =>
   requestJson(url, { method: 'POST', body: payload });
 
+export const putRest = async (url, payload) =>
+  requestJson(url, { method: 'PUT', body: payload });
+
+export const deleteRest = async (url) =>
+  requestJson(url, { method: 'DELETE' });
+
 export async function requestFirstAvailable(endpoints, callback) {
   let lastError;
 

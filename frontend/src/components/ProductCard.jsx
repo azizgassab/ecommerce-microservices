@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { formatCurrency } from '../utils/formatters';
 
-function ProductCard({ product, onAddToCart }) {
+function ProductCard({ product }) {
   return (
     <article className="product-card">
       <div className="product-image-wrapper">
@@ -19,16 +19,9 @@ function ProductCard({ product, onAddToCart }) {
       </div>
 
       <div className="product-actions">
-        <Link className="btn btn-ghost" to={`/products/${product.id}`}>
+        <Link className="btn btn-primary" to={`/products/${product.id}`}>
           Details
         </Link>
-        <button
-          className="btn btn-primary"
-          type="button"
-          onClick={() => onAddToCart(product)}
-        >
-          Add to Cart
-        </button>
       </div>
     </article>
   );
