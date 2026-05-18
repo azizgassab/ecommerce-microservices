@@ -31,7 +31,7 @@ async function startServer() {
         res.send('API Gateway Running');
     });
 
-    app.listen(3000, () => {
+    app.listen(4000, () => {
         console.log('Gateway running on port 3000');
     });
 
